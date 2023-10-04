@@ -26,7 +26,7 @@ def create_dataset(dataset_kwargs):
         dataset = PascalContextDataset(split=split, **dataset_kwargs)
     elif dataset_name == "cityscapes":
         dataset = CityscapesDataset(split=split, **dataset_kwargs)
-    elif dataset_name == "synpickseq1":
+    elif dataset_name == "synpickseq":
         if(split=="train"):
             dataset=SynpickseqVP(split="train",**dataset_kwargs)
         elif(split=="test"):

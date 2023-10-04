@@ -309,7 +309,7 @@ class CustomVideoDataset2(Dataset):
         return palette
 
 @DATASETS.register_module()
-class synpickseq1(CustomVideoDataset2):
+class synpickseq(CustomVideoDataset2):
     """Cityscapes dataset.
     The ``img_suffix`` is fixed to '_leftImg8bit.png' and ``seg_map_suffix`` is
     fixed to '_gtFine_labelTrainIds.png' for Cityscapes dataset.

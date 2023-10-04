@@ -1,6 +1,6 @@
 # dataset settings
 from segm_video.data import LoadImageFromFile1,LoadAnnotations1,RandomCrop1,RandomFlip1,PhotoMetricDistortion1,Normalize1,Pad1,DefaultFormatBundle1,Collect1,MultiScaleFlipAug1,ImageToTensor1
-dataset_type = "synpickseq1"
+dataset_type = "synpickseq"
 data_root = "/home/user/siddiquia0/dataset"
 
 img_norm_cfg = dict(

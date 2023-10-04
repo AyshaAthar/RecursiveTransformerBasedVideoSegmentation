@@ -5,7 +5,7 @@ from segm_video.data.imagenet import ImagenetDataset
 from segm_video.data.cityscapes import CityscapesDataset
 
 from segm_video.data.synpickseq import CustomVideoDataset2
-from segm_video.data.synpickseq import synpickseq1
+from segm_video.data.synpickseq import synpickseq
 from segm_video.data.synpickseq import SynpickseqVP
 
 from segm_video.data.cityscapesseq import CustomVideoDataset
