@@ -53,7 +53,7 @@ gpu run python -m train --log-dir synpickseq_linear_mse --dataset synpickseq1 --
 ```
 where
 1. log-dir : Directory to log the results, store checkpoints.
-2. dataset : Name of dataset, use synpickseq1 for synpick and cityscsapesseq for cityscapes.
+2. dataset : Name of dataset, use synpickseq for synpick and cityscsapesseq for cityscapes.
 3. backbone: ViT encoder backbone.
 4. decoder: Type of decoder, linear/mask_transformer.
 5. pretrain-log-dir: Directory from which it loads pretrained frame-by-frame model.
@@ -65,5 +65,5 @@ gpu run python -m evaluationscript --model-path synpickseq_linear_mse --dataset-
 ```
 where
 1. model-path: Directory that contains the checkpoints. Have the directory inside the main folder.
-2. dataset-name : Name of dataset, use synpickseq1 for synpick and cityscsapesseq for cityscapes.
+2. dataset-name : Name of dataset, use synpickseq for synpick and cityscsapesseq for cityscapes.
 
