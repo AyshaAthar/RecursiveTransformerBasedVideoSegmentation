@@ -5,8 +5,11 @@ Extend the paper that introduced [Segmenter](https://arxiv.org/abs/2105.05633) t
 Essentially, a model that handles temporal relations well using transformers.
 
 An overview of the model is given below - 
-![ppt-model](https://github.com/AyshaAthar/RecursiveTransformerBasedVideoSegmentation/assets/24750702/fd969ac3-bdaf-4a51-be93-f2f16d9ecf7e)
-
+<p align="center">
+  <a href="https://github.com/here-to-learn0/Video_frame_prediction">
+    <img src="model_architecture.png" alt="Logo" width="610" height="300">
+  </a>
+</p>
 In order to create the required environment:
 Use the File requirements.txt. 
 
