@@ -8,7 +8,7 @@ An overview of the model is given below -
 ![ppt-model](https://github.com/AyshaAthar/RecursiveTransformerBasedVideoSegmentation/assets/24750702/fd969ac3-bdaf-4a51-be93-f2f16d9ecf7e)
 
 In order to create the required environment:
-Use the File requirements.txt to create the required environment. 
+Use the File requirements.txt. 
 
 This code base is developed on top of the existing Segmenters repository:
 
