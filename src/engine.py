@@ -141,8 +141,6 @@ def evaluate(
             segs = rearrange(segs,"t b h w -> b t h w")
             segs = segs.long().to(ptu.device)
 
-        
-
         ims_metas = batch["im_metas"]
         ori_shape = ims_metas[0]["ori_shape"]
         ori_shape = torch.cat(ori_shape, dim=0)[0:2].numpy()
@@ -151,8 +149,6 @@ def evaluate(
         with amp_autocast():
             seg_pred, predictor_embds, corrector_embds, vit_embds = inference(model,ims,ims_metas,ori_shape, window_size,window_stride,batch_size=1,)
             #loss1 = criterion1(predictor_embds,vit_embds[:, 1:])
-            if dataset!="cityscapesseq":
-                seg_pred = seg_pred.reshape(1,4,23,135,240)
 
             seg_pred = rearrange(seg_pred,"b t n h w -> b n t h w")
             seg_pred = seg_pred.to(ptu.device)
@@ -182,7 +178,6 @@ def evaluate(
                 seg_gt_maps[filename] = segs.squeeze(dim=0).detach().cpu()
                 seg_pred_maps[filename] = seg_pred.squeeze().detach().cpu()[index:index+1,:,:]
 
-
     scores = compute_metrics(
         seg_pred_maps,
         seg_gt_maps,
@@ -210,6 +205,7 @@ def evaluate(
     return logger
 
 def show(grids):
+    """ Function to show the grids """
     fig, axs = plt.subplots(nrows=len(grids), squeeze=False)
     fig.set_size_inches(25,8)
 
@@ -223,6 +219,7 @@ def show(grids):
     wandb.log({"outputs" : wandb.Image(fig)}) 
 
 def visualize_results(model, dataset, test_loader,window_size,window_stride, device):
+    """ Function to visualise one data sample for wandb """
     batch = next(iter(test_loader))
 
     ims = batch["im"][0]
@@ -250,8 +247,6 @@ def visualize_results(model, dataset, test_loader,window_size,window_stride, dev
     with torch.no_grad():
 
         seg_pred, predictor_embds, corrector_embds, vit_embds = inference(model,ims,ims_metas,ori_shape,window_size,window_stride,1)
-        if dataset!="cityscapesseq":
-            seg_pred = seg_pred.reshape(1,4,23,135,240)
 
         seg_pred = FF.softmax(seg_pred, 2)
 

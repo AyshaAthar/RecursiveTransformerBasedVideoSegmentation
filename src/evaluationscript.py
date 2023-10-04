@@ -33,6 +33,7 @@ from segm_video.model.vivit.video_vit import ViViT
 def process_batch(
     model, dataset, batch, window_size, window_stride, window_batch_size,
 ):
+    """ Process each batch """
     ims = batch["im"][0]
     ims_metas = batch["im_metas"]
     ori_shape = ims_metas[0]["ori_shape"]
@@ -77,6 +78,7 @@ def eval_dataset(
     frac_dataset,
     dataset_kwargs,
 ):
+    """ Function to evaluate the dataset on the given model, computes miou and accuracy """
     db = create_dataset(dataset_kwargs)
     normalization = db.dataset.normalization
     dataset_name = dataset_kwargs["dataset"]
@@ -130,11 +132,46 @@ def eval_dataset(
             if k != "cat_iou":
                 print(f"{k}: {scores[k]}")
         scores_str = yaml.dump(scores)
-        with open(model_dir / f"scores_{suffix}.yml", "w") as f:
+        with open("../" + model_path / f"scores_{suffix}.yml", "w") as f:
             f.write(scores_str)
     del seg_pred_maps
     del seg_gt_maps 
     gc.collect()
+    
+    
+def load_model(model_path, dataset_name):
+    """ Function to load the model """
+    
+    variant_path = "../" + model_path + "/variant.yml"
+    print(variant_path)
+    with open(variant_path, "r") as f:
+        variant = yaml.load(f, Loader=yaml.FullLoader)
+    net_kwargs = variant["net_kwargs"]
+    
+    crop_size = net_kwargs["image_size"]
+    patch_size = net_kwargs["patch_size"]
+    n_layers = net_kwargs["n_layers"]
+    n_layers_pred = net_kwargs["n_layers_pred"]
+    n_layers_corr = net_kwargs["n_layers_corr"]
+    d_model = net_kwargs["d_model"]
+    n_heads = net_kwargs["n_heads"]
+    decoder = net_kwargs["decoder"]["name"]
+    
+    if(dataset_name == "cityscapesseq"):
+        n_cls=19
+    else:
+        n_cls=23
+        
+    model = ViViT((crop_size), patch_size, n_layers , n_layers_pred, n_layers_corr, d_model, 4*d_model, n_heads, n_cls, decoder)
+    path = os.path.expandvars("../" + model_path + "/checkpoint.pth")
+
+    #Loading weights
+    state_dict = torch.load(path, map_location="cpu")
+    filtered_dict = checkpoint_filter_fn(state_dict, model.vit_embs.encoder)
+    model.load_state_dict(filtered_dict,strict = False)
+
+    return model, variant
+
 
 @click.command(help="")
 @click.option("--model-path", type=str, help="Path to model")
@@ -195,7 +232,7 @@ def main(
     eval_dataset(
         model,
         multiscale,
-        model_dir,
+        model_path,
         window_size,
         window_stride,
         window_batch_size,
@@ -204,37 +241,6 @@ def main(
     )
 
     sys.exit(1)
-
-def load_model(model_path, dataset_name):
-    variant_path = "../" + model_path + "/variant.yml"
-    print(variant_path)
-    with open(variant_path, "r") as f:
-        variant = yaml.load(f, Loader=yaml.FullLoader)
-    net_kwargs = variant["net_kwargs"]
-    
-    crop_size = net_kwargs["image_size"]
-    patch_size = net_kwargs["patch_size"]
-    n_layers = net_kwargs["n_layers"]
-    n_layers_pred = net_kwargs["n_layers_pred"]
-    n_layers_corr = net_kwargs["n_layers_corr"]
-    d_model = net_kwargs["d_model"]
-    n_heads = net_kwargs["n_heads"]
-    decoder = net_kwargs["decoder"]["name"]
-    
-    if(dataset_name == "cityscapesseq"):
-        n_cls=19
-    else:
-        n_cls=23
-        
-    model = ViViT((crop_size), patch_size, n_layers , n_layers_pred, n_layers_corr, d_model, 4*d_model, n_heads, n_cls, decoder)
-    path = os.path.expandvars("../" + model_path + "/checkpoint.pth")
-
-    #Loading weights
-    state_dict = torch.load(path, map_location="cpu")
-    filtered_dict = checkpoint_filter_fn(state_dict, model.vit_embs.encoder)
-    model.load_state_dict(filtered_dict,strict = False)
-
-    return model, variant
 
 if __name__ == "__main__":
     main()
